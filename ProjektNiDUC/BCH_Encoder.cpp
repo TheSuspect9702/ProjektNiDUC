@@ -14,7 +14,15 @@ private:
     vector<int> alpha_to; // tablica pierwiastków
     vector<int> index_of; // tablica indeksów pierwiastków
     vector<int> g; // wielomian generuj¹cy
-
+    void generate_alphato(int minimalny) {
+        alpha_to[0] = 1;
+        for (int i = 1; i < n; i++) {
+            alpha_to[i] = (alpha_to[i - 1] << 1);
+            if (alpha_to[i] >= pow(2,m)) {
+                alpha_to[i] ^= minimalny;
+            }
+        }
+    }
     void generate_g() {
         g.clear();
         g.push_back(1);
@@ -66,84 +74,15 @@ private:
     int tab[15][4] = {};
 public:
     BCH_Encoder(int _n, int _k, int _t) {
+        int wielomianMinimalny = 19; // 0001  0001  1101 285
         t = _t;
         n = _n;
         k = _k;
         m = (int)ceil(log2(n + 1 - k));
         d = 2 * m + 1;
-        alpha_to.resize(n + 1);
+        alpha_to.resize(n);
         index_of.resize(n + 1);
-        //vector<int> minimalny(m, 0);
-        ////DODAC WCZYTYWANIE FUNKCJI MINIMALNYCH
-        //minimalny[1] = 1;
-        //minimalny[0] = 1;
-        //alpha_to[0] = 1;
-        //tab[0][0] = 1;
-        //for (int i = 1; i < n; i++) {
-        //    if (i < m) {
-        //        for (int j = 3; j >= 0; j--) {
-        //            if (tab[i - 1][j] != 0) {
-        //                alpha_to[i] = alpha_to[j] * 2;
-        //                tab[i][j] = tab[i - 1][j] + 1;
-        //                if (tab[i][j] == 2) {
-        //                    if (j == 3) {
-        //                        tab[i][0]++;
-        //                        tab[i][1]++;
-        //                        for (int k = 0; k < 4; k++) {
-        //                            if (tab[i][k] == 2) {
-        //                                tab[i][k] = 0;
-        //                                tab[i][k + 1]++;
-        //                            }
-        //                        }
-        //                    }
-        //                    tab[i][j] = 0;
-        //                    tab[i][j + 1]++;
-        //                }
-        //            }
-        //        }
-        //    }
-        //    else {
-        //        if (i == m) {
-        //            for (int k = 0; k < m; k++) {
-        //                if (minimalny[k] != 0) {
-        //                    tab[i][k] = 1;
-        //                    tab[i][k] = 1;
-        //                }
-        //            }
-        //            for (int k = 0; k < m; k++)
-        //                if (tab[i][k] != 0)
-        //                alpha_to[i] += alpha_to[k];
-        //        }
-        //        else if(alpha_to[i-1]*2<16) {
-        //            alpha_to[i] = alpha_to[i - 1] * 2;
-        //        }
-        //        
-        //        else {
-
-        //        }
-
-        //    }  // DO DOKONCZENIA EWENTUALNIE BLAGAM NIE
-        //}
-        alpha_to[0] = 1;
-        alpha_to[1] = 2;
-        alpha_to[2] = 4;
-        alpha_to[3] = 8;
-        alpha_to[4] = 3;
-        alpha_to[5] = 6;
-        alpha_to[6] = 12;
-        alpha_to[7] = 11;
-        alpha_to[8] = 5;
-        alpha_to[9] = 10;
-        alpha_to[10] = 7;
-        alpha_to[11] = 14;
-        alpha_to[12] = 15;
-        alpha_to[13] = 13;
-        alpha_to[14] = 9;
-
-        for (int i = 0; i < n; i++) {
-            index_of[alpha_to[i]] = i;
-        }
-
+        generate_alphato(wielomianMinimalny);
         g.resize(m + 1);
         generate_g();
     }
