@@ -5,6 +5,8 @@
 using namespace std;
 
 class BCH_Encoder {
+public:
+    vector<int> g; // wielomian generuj¹cy
 private:
     int n; // d³ugoœæ s³owa kodowego
     int k; // iloœæ bitów informacyjnych
@@ -13,7 +15,7 @@ private:
     int t; //zdolnosc korekcyjna
     vector<int> alpha_to; // tablica pierwiastków
     vector<int> index_of; // tablica indeksów pierwiastków
-    vector<int> g; // wielomian generuj¹cy
+   
     void generate_alphato(int minimalny) {
         alpha_to[0] = 1;
         for (int i = 1; i < n; i++) {
@@ -74,7 +76,7 @@ private:
     int tab[15][4] = {};
 public:
     BCH_Encoder(int _n, int _k, int _t) {
-        int wielomianMinimalny = 19; // 0001  0001  1101 285
+        int wielomianMinimalny = 19; // 0001  0001  1101 285 - 19 
         t = _t;
         n = _n;
         k = _k;
@@ -113,12 +115,13 @@ public:
     }
     vector<int> encode(vector<int> message) {
         vector<int> codeword;
-        for(int i = 0;i<message.size();i++)
-            if (i % 5 == 4) {
+        for (int i = 0; i < message.size(); i++) {
+            cout << message[i] << " ";
+            if (i % k == k-1) {
                 vector<int>result(k, 0);
                 vector<int> rest;
                 int x = 0;
-                for (int j = i-4; j <= i; j++) {
+                for (int j = i - (k - 1); j <= i; j++) {
                     result[x] = message[j];
                     x++;
                 }
@@ -129,22 +132,71 @@ public:
                 for (int j = 0; j < result.size(); j++)
                     codeword.push_back(result[j]);
             }
+        }
+        for (int i = 0; i < codeword.size(); i++) {
+            if (rand() % 20 == 1) {
+                codeword[i]++;
+                codeword[i] %= 2;
+            }
+        }
+
         return codeword;
     }
 };
 
 int main() {
+    srand(time(NULL));
     int k, n,t;
-    k = 5;
-    n = 15;
-    t = 3; 
+    k = 5; //5 - 50
+    n = 15; //15 - 255
+    t = 3; //3 - 15
     BCH_Encoder bch(n, k, t);
     vector<int> message = {0,0,1,1,0,0,1,0,0};
     while (message.size() % k != 0 && message.size() > 0)
         message.push_back(0);
     vector<int> codeword = bch.encode(message);
+    cout << endl;  cout << endl;  cout << endl;
     for (int i = 0; i < codeword.size(); i++) {
         cout << codeword[i];
     }
+    //dekoder
+    vector<int> syndrom = bch.divide(codeword, bch.g);
+    int wagaHamminga = 0;
+    cout << endl;
+    for (int i = 0; i < syndrom.size(); i++) {
+        if (syndrom[i] == 1)
+            wagaHamminga++;
+        cout << syndrom[i];
+    }
+    int liczbaPrzesuniêæ = 0;
+    vector<int> temp = codeword;
+    cout << endl << wagaHamminga;
+    while (wagaHamminga > t) {
+        if (temp.size() == 0)
+            break;
+        temp.pop_back();
+        syndrom = bch.divide(temp, bch.g);
+        for (int i = 0; i < syndrom.size(); i++)
+            if (syndrom[i] == 1)
+                wagaHamminga++;
+        liczbaPrzesuniêæ++;
+    }
+    temp = bch.add(temp, syndrom);
+    while (liczbaPrzesuniêæ != 0) {
+        liczbaPrzesuniêæ--;
+        temp.push_back(0);
+    }
+    codeword = temp;
+    cout << endl;
+    for (int i = 0; i < codeword.size(); i++)
+        cout << codeword[i];
+    cout << endl << wagaHamminga;
     return 0;
 }
+//101111000100110011101100101000 - dobrze zakodowane
+//111111000100110011101100101000 - przed poprawka 
+//101111000100110011101100101000 - po poprawce
+//101111000100010011101100101000 - przed poprawka waga 7
+//000000000000000000000000000000 - po poprawce xD
+//101111001100110001101100111110 - przed waga 2
+//101011001000110001101100111110 - po poprawce
