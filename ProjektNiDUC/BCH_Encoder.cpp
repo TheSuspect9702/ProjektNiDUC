@@ -47,7 +47,7 @@ private:
                 p = i;
                 do {
                     v.push_back(p);
-                    p = (p * 2) % 15;
+                    p = (p * 2) % n;
                 } while (p != first);
                 warstwy.push_back(v);
                 v.clear();
@@ -111,7 +111,7 @@ private:
     int tab[15][4] = {};
 public:
     BCH_Encoder(int _n, int _k, int _t) {
-        int wielomianMinimalny = 19; // 0001  0001  1101 285
+        int wielomianMinimalny = 285; // 0001  0001  1101 285
         t = _t;
         n = _n;
         k = _k;
@@ -172,9 +172,9 @@ public:
 
 int main() {
     int k, n, t;
-    k = 5;
-    n = 15;
-    t = 3;
+    k = 50;
+    n = 255;
+    t = 15;
     BCH_Encoder bch(n, k, t);
     vector<int> message = { 0,0,1,1,0,0,1,0,0 };
     while (message.size() % k != 0 && message.size() > 0)
@@ -183,5 +183,37 @@ int main() {
     for (int i = 0; i < codeword.size(); i++) {
         cout << codeword[i];
     }
+    //dekoder
+    vector<int> syndrom = bch.divide(codeword, bch.g);
+    int wagaHamminga = 0;
+    cout << endl;
+    for (int i = 0; i < syndrom.size(); i++) {
+        if (syndrom[i] == 1)
+            wagaHamminga++;
+        cout << syndrom[i];
+    }
+    int liczbaPrzesuniec = 0;
+    vector<int> temp = codeword;
+    cout << endl << wagaHamminga;
+    while (wagaHamminga > t) {
+        if (temp.size() == 0)
+            break;
+        temp.pop_back();
+        syndrom = bch.divide(temp, bch.g);
+        for (int i = 0; i < syndrom.size(); i++)
+            if (syndrom[i] == 1)
+                wagaHamminga++;
+        liczbaPrzesuniec++;
+    }
+    temp = bch.add(temp, syndrom);
+    while (liczbaPrzesuniec != 0) {
+        liczbaPrzesuniec--;
+        temp.push_back(0);
+    }
+    codeword = temp;
+    cout << endl;
+    for (int i = 0; i < codeword.size(); i++)
+        cout << codeword[i];
+    cout << endl << wagaHamminga;
     return 0;
 }
