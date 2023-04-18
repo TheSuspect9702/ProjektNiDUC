@@ -5,8 +5,6 @@
 using namespace std;
 
 class BCH_Encoder {
-public:
-    vector<int> g; // wielomian generuj¹cy
 private:
     int n; // d³ugoœæ s³owa kodowego
     int k; // iloœæ bitów informacyjnych
@@ -15,20 +13,56 @@ private:
     int t; //zdolnosc korekcyjna
     vector<int> alpha_to; // tablica pierwiastków
     vector<int> index_of; // tablica indeksów pierwiastków
-   
+    vector<vector<int>> warstwy;
+    vector<int> g; // wielomian generuj¹cy
     void generate_alphato(int minimalny) {
         alpha_to[0] = 1;
         for (int i = 1; i < n; i++) {
             alpha_to[i] = (alpha_to[i - 1] << 1);
-            if (alpha_to[i] >= pow(2,m)) {
+            if (alpha_to[i] >= pow(2, m)) {
                 alpha_to[i] ^= minimalny;
+            }
+        }
+    }
+    bool didntOccur(int e, vector<vector<int>> warstwy) {
+        for (int i = 0; i < warstwy.size(); i++) {
+            for (int j = 0; j < warstwy[i].size(); j++) {
+                if (warstwy[i][j] == e) return false;
+            }
+        }
+        return true;
+    }
+    void wyznaczWarstwyCyklotomiczne(vector<int> alpha_to) {
+        vector<int> v;
+        v.push_back(0);
+        warstwy.push_back(v);
+        v.clear();
+        int nrWarstwy = 1;
+        int first = 0;
+
+        int p;
+        for (int i = 1; i < n; i++) {
+            first = i;
+            if (didntOccur(i, warstwy)) {
+                p = i;
+                do {
+                    v.push_back(p);
+                    p = (p * 2) % 15;
+                } while (p != first);
+                warstwy.push_back(v);
+                v.clear();
+                nrWarstwy++;
+
             }
         }
     }
     void generate_g() {
         g.clear();
         g.push_back(1);
-        minimalne[0].insert(minimalne[0].begin(), 1);
+
+        wyznaczWarstwyCyklotomiczne(alpha_to);
+
+        /*minimalne[0].insert(minimalne[0].begin(), 1);
         minimalne[0].insert(minimalne[0].begin(), 1);
         minimalne[1].insert(minimalne[1].begin(), 1);
         minimalne[1].insert(minimalne[1].begin(), 0);
@@ -47,7 +81,7 @@ private:
         minimalne[4].insert(minimalne[4].begin(), 1);
         minimalne[4].insert(minimalne[4].begin(), 0);
         minimalne[4].insert(minimalne[4].begin(), 0);
-        minimalne[4].insert(minimalne[4].begin(), 1);
+        minimalne[4].insert(minimalne[4].begin(), 1);*/
 
         /*for (int i = 1; i <= 2 * m; i++) {
             int gi = 1;
@@ -56,9 +90,10 @@ private:
                 gi %= 2;
             }
             g.push_back(gi);
-        }*/
-        for (int i = 1; i < 4; i++)
-           g = multiply_poly(g, minimalne[i]);
+        }
+        for (int i = 1; i < 4; i+
+           g = multiply_poly(g, minimalne[i]);+)
+           */
     }
     vector<int>* minimalne = new vector<int>[5]; //zmienic 5 na odpowiednia zmienna
     vector<int> multiply_poly(vector<int>& A, vector<int>& B) {
@@ -76,7 +111,7 @@ private:
     int tab[15][4] = {};
 public:
     BCH_Encoder(int _n, int _k, int _t) {
-        int wielomianMinimalny = 19; // 0001  0001  1101 285 - 19 
+        int wielomianMinimalny = 19; // 0001  0001  1101 285
         t = _t;
         n = _n;
         k = _k;
@@ -115,13 +150,12 @@ public:
     }
     vector<int> encode(vector<int> message) {
         vector<int> codeword;
-        for (int i = 0; i < message.size(); i++) {
-            cout << message[i] << " ";
-            if (i % k == k-1) {
+        for (int i = 0; i < message.size(); i++)
+            if (i % 5 == 4) {
                 vector<int>result(k, 0);
                 vector<int> rest;
                 int x = 0;
-                for (int j = i - (k - 1); j <= i; j++) {
+                for (int j = i - 4; j <= i; j++) {
                     result[x] = message[j];
                     x++;
                 }
@@ -132,77 +166,22 @@ public:
                 for (int j = 0; j < result.size(); j++)
                     codeword.push_back(result[j]);
             }
-        }
-        for (int i = 0; i < codeword.size(); i++) {
-            if (rand() % 20 == 1) {
-                codeword[i]++;
-                codeword[i] %= 2;
-            }
-        }
-
         return codeword;
     }
 };
 
 int main() {
-    srand(time(NULL));
-    int k, n,t;
-    k = 5; //5 - 50
-    n = 15; //15 - 255
-    t = 3; //3 - 15
+    int k, n, t;
+    k = 5;
+    n = 15;
+    t = 3;
     BCH_Encoder bch(n, k, t);
-    vector<int> message = {0,0,1,1,0,0,1,0,0};
+    vector<int> message = { 0,0,1,1,0,0,1,0,0 };
     while (message.size() % k != 0 && message.size() > 0)
         message.push_back(0);
     vector<int> codeword = bch.encode(message);
-    cout << endl;  cout << endl;  cout << endl;
     for (int i = 0; i < codeword.size(); i++) {
         cout << codeword[i];
     }
-    //dekoder
-    vector<int> syndrom = bch.divide(codeword, bch.g);
-    int wagaHamminga = 0;
-    cout << endl;
-    for (int i = 0; i < syndrom.size(); i++) {
-        if (syndrom[i] == 1)
-            wagaHamminga++;
-        cout << syndrom[i];
-    }
-    int liczbaPrzesuniêæ = 0;
-    vector<int> temp = codeword;
-    vector<int> temp1;
-    cout << endl << wagaHamminga;
-    int size;
-    size = codeword.size();
-    while (wagaHamminga > t) {
-        if (size == temp.size()/2)
-            break;
-        size--;
-        int x = 0;
-        for (int i = 1; i < temp.size(); i++) {
-            temp[x] = temp[i];
-            x++;
-        }
-        temp1.push_back(temp[temp.size()-size]);
-        syndrom = bch.divide(temp, bch.g);
-        for (int i = 0; i < syndrom.size(); i++)
-            if (syndrom[i] == 1)
-                wagaHamminga++;
-        liczbaPrzesuniêæ++;
-    }
-    temp = bch.add(temp, syndrom);
-    int x = 0;
-    while (liczbaPrzesuniêæ != 0) {
-        liczbaPrzesuniêæ--;
-        temp.push_back(temp1[x]);
-        x++;
-    }
-    codeword = temp;
-    cout << endl;
-    for (int i = 0; i < codeword.size(); i++)
-        cout << codeword[i];
-    cout << endl << wagaHamminga;
     return 0;
 }
-//101111000100110011101100101000 - dobrze zakodowane
-//101111001100100011100100101000
