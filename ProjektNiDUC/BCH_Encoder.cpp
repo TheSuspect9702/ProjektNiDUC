@@ -170,11 +170,20 @@ int main() {
     }
     int liczbaPrzesuniêæ = 0;
     vector<int> temp = codeword;
+    vector<int> temp1;
     cout << endl << wagaHamminga;
+    int size;
+    size = codeword.size();
     while (wagaHamminga > t) {
-        if (temp.size() == 0)
+        if (size == temp.size()/2)
             break;
-        temp.pop_back();
+        size--;
+        int x = 0;
+        for (int i = 1; i < temp.size(); i++) {
+            temp[x] = temp[i];
+            x++;
+        }
+        temp1.push_back(temp[temp.size()-size]);
         syndrom = bch.divide(temp, bch.g);
         for (int i = 0; i < syndrom.size(); i++)
             if (syndrom[i] == 1)
@@ -182,9 +191,11 @@ int main() {
         liczbaPrzesuniêæ++;
     }
     temp = bch.add(temp, syndrom);
+    int x = 0;
     while (liczbaPrzesuniêæ != 0) {
         liczbaPrzesuniêæ--;
-        temp.push_back(0);
+        temp.push_back(temp1[x]);
+        x++;
     }
     codeword = temp;
     cout << endl;
@@ -194,9 +205,4 @@ int main() {
     return 0;
 }
 //101111000100110011101100101000 - dobrze zakodowane
-//111111000100110011101100101000 - przed poprawka 
-//101111000100110011101100101000 - po poprawce
-//101111000100010011101100101000 - przed poprawka waga 7
-//000000000000000000000000000000 - po poprawce xD
-//101111001100110001101100111110 - przed waga 2
-//101011001000110001101100111110 - po poprawce
+//101111001100100011100100101000
