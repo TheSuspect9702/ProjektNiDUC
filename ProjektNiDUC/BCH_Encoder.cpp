@@ -5,6 +5,8 @@
 using namespace std;
 
 class BCH_Encoder {
+public:
+    vector<int> g; // wielomian generuj¹cy
 private:
     int n; // d³ugoœæ s³owa kodowego
     int k; // iloœæ bitów informacyjnych
@@ -14,7 +16,7 @@ private:
     vector<int> alpha_to; // tablica pierwiastków
     vector<int> index_of; // tablica indeksów pierwiastków
     vector<vector<int>> warstwy;
-    vector<int> g; // wielomian generuj¹cy
+    
     void generate_alphato(int minimalny) {
         alpha_to[0] = 1;
         for (int i = 1; i < n; i++) {
