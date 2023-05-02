@@ -62,9 +62,9 @@ private:
         g.clear();
         g.push_back(1);
 
-        wyznaczWarstwyCyklotomiczne(alpha_to);
+        //wyznaczWarstwyCyklotomiczne(alpha_to);
 
-        /*minimalne[0].insert(minimalne[0].begin(), 1);
+        minimalne[0].insert(minimalne[0].begin(), 1);
         minimalne[0].insert(minimalne[0].begin(), 1);
         minimalne[1].insert(minimalne[1].begin(), 1);
         minimalne[1].insert(minimalne[1].begin(), 0);
@@ -83,7 +83,7 @@ private:
         minimalne[4].insert(minimalne[4].begin(), 1);
         minimalne[4].insert(minimalne[4].begin(), 0);
         minimalne[4].insert(minimalne[4].begin(), 0);
-        minimalne[4].insert(minimalne[4].begin(), 1);*/
+        minimalne[4].insert(minimalne[4].begin(), 1);
 
         /*for (int i = 1; i <= 2 * m; i++) {
             int gi = 1;
@@ -92,10 +92,10 @@ private:
                 gi %= 2;
             }
             g.push_back(gi);
-        }
-        for (int i = 1; i < 4; i+
-           g = multiply_poly(g, minimalne[i]);+)
-           */
+        }*/
+        for (int i = 1; i < 4; i++)
+           g = multiply_poly(g, minimalne[i]);
+           
     }
     vector<int>* minimalne = new vector<int>[5]; //zmienic 5 na odpowiednia zmienna
     vector<int> multiply_poly(vector<int>& A, vector<int>& B) {
@@ -113,7 +113,7 @@ private:
     int tab[15][4] = {};
 public:
     BCH_Encoder(int _n, int _k, int _t) {
-        int wielomianMinimalny = 285; // 0001  0001  1101 285
+        int wielomianMinimalny = 19; // 0001  0001  1101 285
         t = _t;
         n = _n;
         k = _k;
@@ -168,15 +168,22 @@ public:
                 for (int j = 0; j < result.size(); j++)
                     codeword.push_back(result[j]);
             }
+        for (int i = 0; i < codeword.size(); i++) {
+            if (rand() % 20 == 1) {
+                codeword[i]++;
+                codeword[i] %= 2;
+            }
+        }
         return codeword;
     }
 };
 
 int main() {
+    srand(time(NULL));
     int k, n, t;
-    k = 50;
-    n = 255;
-    t = 15;
+    k = 5;
+    n = 15;
+    t = 3;
     BCH_Encoder bch(n, k, t);
     vector<int> message = { 0,0,1,1,0,0,1,0,0 };
     while (message.size() % k != 0 && message.size() > 0)
@@ -219,3 +226,9 @@ int main() {
     cout << endl << wagaHamminga;
     return 0;
 }
+//101111000100110011101100101000
+//001111000000110001101100101000
+//1100000001
+//3
+//111111000100110001101100101000
+//3
