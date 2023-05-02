@@ -72,86 +72,129 @@ void BCH_Encoder::generate_g() {
     //minimalne[4].insert(minimalne[4].begin(), 0);
     //minimalne[4].insert(minimalne[4].begin(), 1);
 
-    for (int i = 2; i <= t; i++)
+    for (int i = 3; i <= t; i++)
         g = multiply_poly(g, warstwy[i]);
 
 }
 vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
 
     vector<int> tempWynik;
-
-    tempWynik.push_back(0); //
-    tempWynik.push_back(1); //jest jakis x
-
-    alfy.push_back(warstwy[0]); 
-    alfy.push_back(0);
-
-    int x;
-    int len;
-   
-     for (int i = 1; i < warstwy.size(); i++) {
-        len = tempWynik.size();
-        for (int j = 0; j < len-1; j++) {
-
-            if (alfy[j + 1] == 0) {
-                alfy[j + 1] = alfy[j];
-                alfy[j + 1] %= 15;
+    vector<int> temp;
+    vector<int> temp1;
+    vector<int> nawias;
+    tempWynik.push_back(0);
+    tempWynik.push_back(warstwy[0]);
+    nawias.push_back(0);
+    nawias.push_back(warstwy[1]);
+    int k;
+    for (int i = 1; i < warstwy.size(); i++) {
+        nawias[1] = warstwy[i];
+        k = 1;
+        temp.clear();
+        temp1.clear();
+        for (int x = 0; x < nawias.size(); x++) {   // mnozenie nawias razy to co dotychczas 
+            for (int z = 0; z < tempWynik.size(); z++) {
+                if (x == 0)
+                    temp.push_back(((nawias[x] + tempWynik[z]) % 15));      
+                else {
+                    temp1.push_back(((nawias[x] + tempWynik[z]) % 15));
+                }
             }
-            else {
-                x = alpha_to[alfy[j]] ^ alpha_to[alfy[j + 1]];
-                x = whichAlpha(x);
-                alfy[j + 1] = x;
-            }
-            if (j == 0) {
-                alfy[j] += warstwy[i];
-                alfy[j] %= 15;
-            }
-            else{
-                x = alpha_to[alfy[j]] ^ alpha_to[alfy[j] + warstwy[i]];
-                x = whichAlpha(x);
-                alfy[j] = x;
-            }
-            
-
-
-
-
-
-            //if (j == 0) {
-            //    if (alfy[1] == 0) {
-            //        alfy[1] += alfy[0];
-            //    }
-            //    else {
-            //        x = alpha_to[alfy[1]] ^ alpha_to[alfy[0]];
-            //        x = whichAlpha(x);
-            //        alfy[1] = x; //xor   
-            //    }
-            //    alfy[j] += warstwy[i];
-            //    alfy[j] %= 15;
-            //    continue;
-            //}
-            //
-            //tempWynik.push_back(1);
-            //x = alpha_to[alfy[j]] ^ alpha_to[warstwy[i]];
-            ////jakie alfa ma wartosc x i wrzucic ten indeks do alfy[j]
-            //x = whichAlpha(x);
-            //alfy[j] = x;
         }
-        //ostatni znak bo zakres do len -1 
-        tempWynik.push_back(1);
-        if (alfy[len - 1] == 0) {
-            alfy[len - 1] = warstwy[i];
+        temp.push_back(0);              //branie pod uwage przeniesienia ze x razy cokolwiek nigdy nie bedzei sama alpha 
+        tempWynik.insert(tempWynik.begin(), 0);             //ustawianie potegi o jeden wyzej
+        for (int j = 1; j < temp.size(); j++) {
+            if (j != temp1.size())
+                tempWynik[k] = whichAlpha(alpha_to[temp[j]] ^ alpha_to[temp1[j - 1]]);
+            else
+                tempWynik[k] = temp1[j - 1];
+            k++;
         }
-        else {
-            x = alpha_to[alfy[len - 1]] ^ alpha_to[warstwy[i]];
-            x = whichAlpha(x);
-            alfy[len - 1] = x;
-        }
-        alfy.push_back(0);
     }
+    for (int i = 0; i < tempWynik.size(); i++) {    //zapis obliczonego wielomianu do g im wyzszy indeks tym wieksza potega przy x
+        if (tempWynik[i] == 15)
+            g.push_back(0);
+        else
+            g.push_back(alpha_to[tempWynik[i]]);
+    }
+    g.erase(g.end()-1); //czyszczenie nadmiarowego miejsca w g 
+    cout << g.size(); //to tak zeby moc wyswietlic co jest w g 
+
+
+
+    //tempWynik.push_back(0); //
+    //tempWynik.push_back(1); //jest jakis x
+
+    //alfy.push_back(warstwy[0]); 
+    //alfy.push_back(0);
+
+    //int x;
+    //int len;
+   
+    // for (int i = 1; i < warstwy.size(); i++) {
+    //    len = tempWynik.size();
+    //    for (int j = 0; j < len-1; j++) {
+
+    //        if (alfy[j + 1] == 0) {
+    //            alfy[j + 1] = alfy[j];
+    //            alfy[j + 1] %= 15;
+    //        }
+    //        else {
+    //            x = alpha_to[alfy[j]] ^ alpha_to[alfy[j + 1]];
+    //            x = whichAlpha(x);
+    //            alfy[j + 1] = x;
+    //        }
+    //        if (j == 0) {
+    //            alfy[j] += warstwy[i];
+    //            alfy[j] %= 15;
+    //        }
+    //        else{
+    //            x = alpha_to[alfy[j]] ^ alpha_to[alfy[j] + warstwy[i]];
+    //            x = whichAlpha(x);
+    //            alfy[j] = x;
+    //        }
+    //        
+
+
+
+
+
+    //        //if (j == 0) {
+    //        //    if (alfy[1] == 0) {
+    //        //        alfy[1] += alfy[0];
+    //        //    }
+    //        //    else {
+    //        //        x = alpha_to[alfy[1]] ^ alpha_to[alfy[0]];
+    //        //        x = whichAlpha(x);
+    //        //        alfy[1] = x; //xor   
+    //        //    }
+    //        //    alfy[j] += warstwy[i];
+    //        //    alfy[j] %= 15;
+    //        //    continue;
+    //        //}
+    //        //
+    //        //tempWynik.push_back(1);
+    //        //x = alpha_to[alfy[j]] ^ alpha_to[warstwy[i]];
+    //        ////jakie alfa ma wartosc x i wrzucic ten indeks do alfy[j]
+    //        //x = whichAlpha(x);
+    //        //alfy[j] = x;
+    //    }
+    //    //ostatni znak bo zakres do len -1 
+    //    tempWynik.push_back(1);
+    //    if (alfy[len - 1] == 0) {
+    //        alfy[len - 1] = warstwy[i];
+    //    }
+    //    else {
+    //        x = alpha_to[alfy[len - 1]] ^ alpha_to[warstwy[i]];
+    //        x = whichAlpha(x);
+    //        alfy[len - 1] = x;
+    //    }
+    //    alfy.push_back(0);
+    //}
 
     return g;
 }
+
 int BCH_Encoder::whichAlpha(int x) {
     for (int i = 0; i < alpha_to.size(); i++) {
         if (alpha_to[i] == x) return i;
