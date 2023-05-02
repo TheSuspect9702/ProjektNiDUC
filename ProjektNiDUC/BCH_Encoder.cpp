@@ -89,28 +89,63 @@ vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
     int x;
     int len;
    
-    for (int i = 1; i < warstwy.size(); i++) {
+     for (int i = 1; i < warstwy.size(); i++) {
         len = tempWynik.size();
-        for (int j = 0; j < len; j++) {
+        for (int j = 0; j < len-1; j++) {
+
+            if (alfy[j + 1] == 0) {
+                alfy[j + 1] = alfy[j];
+                alfy[j + 1] %= 15;
+            }
+            else {
+                x = alpha_to[alfy[j]] ^ alpha_to[alfy[j + 1]];
+                x = whichAlpha(x);
+                alfy[j + 1] = x;
+            }
             if (j == 0) {
-                if (alfy[1] == 0) {
-                    alfy[1] += alfy[0];
-                }
-                else {
-                    x = alpha_to[alfy[1]] ^ alpha_to[alfy[0]];
-                    x = whichAlpha(x);
-                    alfy[1] = x; //xor   
-                }
                 alfy[j] += warstwy[i];
                 alfy[j] %= 15;
-                continue;
+            }
+            else{
+                x = alpha_to[alfy[j]] ^ alpha_to[alfy[j] + warstwy[i]];
+                x = whichAlpha(x);
+                alfy[j] = x;
             }
             
-            tempWynik.push_back(1);
-            x = alpha_to[alfy[j]] ^ alpha_to[warstwy[i]];
-            //jakie alfa ma wartosc x i wrzucic ten indeks do alfy[j]
+
+
+
+
+
+            //if (j == 0) {
+            //    if (alfy[1] == 0) {
+            //        alfy[1] += alfy[0];
+            //    }
+            //    else {
+            //        x = alpha_to[alfy[1]] ^ alpha_to[alfy[0]];
+            //        x = whichAlpha(x);
+            //        alfy[1] = x; //xor   
+            //    }
+            //    alfy[j] += warstwy[i];
+            //    alfy[j] %= 15;
+            //    continue;
+            //}
+            //
+            //tempWynik.push_back(1);
+            //x = alpha_to[alfy[j]] ^ alpha_to[warstwy[i]];
+            ////jakie alfa ma wartosc x i wrzucic ten indeks do alfy[j]
+            //x = whichAlpha(x);
+            //alfy[j] = x;
+        }
+        //ostatni znak bo zakres do len -1 
+        tempWynik.push_back(1);
+        if (alfy[len - 1] == 0) {
+            alfy[len - 1] = warstwy[i];
+        }
+        else {
+            x = alpha_to[alfy[len - 1]] ^ alpha_to[warstwy[i]];
             x = whichAlpha(x);
-            alfy[j] = x;
+            alfy[len - 1] = x;
         }
         alfy.push_back(0);
     }
