@@ -120,7 +120,10 @@ vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
     g.erase(g.end()-1); //czyszczenie nadmiarowego miejsca w g 
     cout << g.size(); //to tak zeby moc wyswietlic co jest w g 
 
-
+    /*
+        NA TEN MOMENT OBLICZA SIE DOBRZE ILOCZYN DLA POJEDYNCZEJ WARSTWY TERAZ TRZEBA DODAC MNOZENIE WIELOMIANOW 
+        POWSTALYCH POPRZEZ POMNOZENIE POSZCZEGOLNYCH WARSTW, CZYLI DE FACTO TO CO JUZ MIELISMY W TEJ FUNKCJI WCZESNIEJ
+    */
 
     //tempWynik.push_back(0); //
     //tempWynik.push_back(1); //jest jakis x
