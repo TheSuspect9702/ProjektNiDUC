@@ -95,8 +95,6 @@ vector<int> BCH_Encoder::multiply_poly(vector<int>& A, vector<int>& B) {
     }
     return C;
 }
-
-
 BCH_Encoder::BCH_Encoder(int _n, int _k, int _t) {
     int wielomianMinimalny = 19; // 0001  0001  1101 285
     t = _t;
@@ -110,6 +108,7 @@ BCH_Encoder::BCH_Encoder(int _n, int _k, int _t) {
     g.resize(m + 1);
     generate_g();
 }
+
 vector<int> BCH_Encoder::add(vector<int> a, vector<int> b) {
     vector<int> result;
     int n = max(a.size(), b.size());
@@ -153,13 +152,12 @@ vector<int> BCH_Encoder::encode(vector<int> message) {
             for (int j = 0; j < result.size(); j++)
                 codeword.push_back(result[j]);
         }
-    //for (int i = 0; i < codeword.size(); i++) {
-    //    if (rand() % 20 == 1) {
-    //        codeword[i]++;
-    //        codeword[i] %= 2;
-    //    }
-    //}
+    for (int i = 0; i < codeword.size(); i++) {
+        if (i %n == 0) {
+            codeword[i]++;
+            codeword[i] %= 2;
+        }
+    }
     return codeword;
 }
-
 

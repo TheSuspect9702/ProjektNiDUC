@@ -21,11 +21,11 @@ int main() {
         cout << codeword[i];
     }
     BCH_Decoder bchDecode(codeword, t, n, k);
+    for (int i = 0; i < bchDecode.message.size(); i++) {
+        bchDecode.message[i] = bchDecode.decode(bchDecode.message[i],bch.g );
+        for (int j = bchDecode.message[i].size() - 1; j > bchDecode.message[i].size() - 1 - k; j--) {
+            cout <<" " << bchDecode.message[i][j] << " ";
+        }
+    }
     return 0;
 }
-//101111000100110011101100101000
-//001111000000110001101100101000
-//1100000001
-//3
-//111111000100110001101100101000
-//3
