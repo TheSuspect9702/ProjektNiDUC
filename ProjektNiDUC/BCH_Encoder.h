@@ -24,6 +24,8 @@ private:
     bool didntOccur(int e, vector<vector<int>> warstwy);
     void wyznaczWarstwyCyklotomiczne(vector<int> alpha_to);
     void generate_g();
+    int whichAlpha(int k);
+    vector<int> alfy;
     vector<int>* minimalne = new vector<int>[5]; //zmienic 5 na odpowiednia zmienna
     vector<int> multiply_poly(vector<int>& A, vector<int>& B);
 };

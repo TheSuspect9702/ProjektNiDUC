@@ -49,51 +49,78 @@ void BCH_Encoder::generate_g() {
     g.clear();
     g.push_back(1);
 
-    //wyznaczWarstwyCyklotomiczne(alpha_to);
+    wyznaczWarstwyCyklotomiczne(alpha_to);
 
-    minimalne[0].insert(minimalne[0].begin(), 1);
-    minimalne[0].insert(minimalne[0].begin(), 1);
-    minimalne[1].insert(minimalne[1].begin(), 1);
-    minimalne[1].insert(minimalne[1].begin(), 0);
-    minimalne[1].insert(minimalne[1].begin(), 0);
-    minimalne[1].insert(minimalne[1].begin(), 1);
-    minimalne[1].insert(minimalne[1].begin(), 1);
-    minimalne[2].insert(minimalne[2].begin(), 1);
-    minimalne[2].insert(minimalne[2].begin(), 1);
-    minimalne[2].insert(minimalne[2].begin(), 1);
-    minimalne[2].insert(minimalne[2].begin(), 1);
-    minimalne[2].insert(minimalne[2].begin(), 1);
-    minimalne[3].insert(minimalne[3].begin(), 1);
-    minimalne[3].insert(minimalne[3].begin(), 1);
-    minimalne[3].insert(minimalne[3].begin(), 1);
-    minimalne[4].insert(minimalne[4].begin(), 1);
-    minimalne[4].insert(minimalne[4].begin(), 1);
-    minimalne[4].insert(minimalne[4].begin(), 0);
-    minimalne[4].insert(minimalne[4].begin(), 0);
-    minimalne[4].insert(minimalne[4].begin(), 1);
+    //minimalne[0].insert(minimalne[0].begin(), 1);
+    //minimalne[0].insert(minimalne[0].begin(), 1);
+    //minimalne[1].insert(minimalne[1].begin(), 1);
+    //minimalne[1].insert(minimalne[1].begin(), 0);
+    //minimalne[1].insert(minimalne[1].begin(), 0);
+    //minimalne[1].insert(minimalne[1].begin(), 1);
+    //minimalne[1].insert(minimalne[1].begin(), 1);
+    //minimalne[2].insert(minimalne[2].begin(), 1);
+    //minimalne[2].insert(minimalne[2].begin(), 1);
+    //minimalne[2].insert(minimalne[2].begin(), 1);
+    //minimalne[2].insert(minimalne[2].begin(), 1);
+    //minimalne[2].insert(minimalne[2].begin(), 1);
+    //minimalne[3].insert(minimalne[3].begin(), 1);
+    //minimalne[3].insert(minimalne[3].begin(), 1);
+    //minimalne[3].insert(minimalne[3].begin(), 1);
+    //minimalne[4].insert(minimalne[4].begin(), 1);
+    //minimalne[4].insert(minimalne[4].begin(), 1);
+    //minimalne[4].insert(minimalne[4].begin(), 0);
+    //minimalne[4].insert(minimalne[4].begin(), 0);
+    //minimalne[4].insert(minimalne[4].begin(), 1);
 
-    /*for (int i = 1; i <= 2 * m; i++) {
-        int gi = 1;
-        for (int j = 0; j < g.size(); j++) {
-            gi ^= alpha_to[(i * j) % n];
-            gi %= 2;
-        }
-        g.push_back(gi);
-    }*/
-    for (int i = 1; i < 4; i++)
-        g = multiply_poly(g, minimalne[i]);
+    for (int i = 2; i <= t; i++)
+        g = multiply_poly(g, warstwy[i]);
 
 }
-vector<int> BCH_Encoder::multiply_poly(vector<int>& A, vector<int>& B) {
-    int n = A.size();
-    int m = B.size();
-    vector<int> C(n + m - 1, 0);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            C[i + j] ^= A[i] & B[j];
+vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
+
+    vector<int> tempWynik;
+
+    tempWynik.push_back(0); //
+    tempWynik.push_back(1); //jest jakis x
+
+    alfy.push_back(warstwy[0]); 
+    alfy.push_back(0);
+
+    int x;
+    int len;
+   
+    for (int i = 1; i < warstwy.size(); i++) {
+        len = tempWynik.size();
+        for (int j = 0; j < len; j++) {
+            if (j == 0) {
+                if (alfy[1] == 0) {
+                    alfy[1] += alfy[0];
+                }
+                else {
+                    x = alpha_to[alfy[1]] ^ alpha_to[alfy[0]];
+                    x = whichAlpha(x);
+                    alfy[1] = x; //xor   
+                }
+                alfy[j] += warstwy[i];
+                alfy[j] %= 15;
+                continue;
+            }
+            
+            tempWynik.push_back(1);
+            x = alpha_to[alfy[j]] ^ alpha_to[warstwy[i]];
+            //jakie alfa ma wartosc x i wrzucic ten indeks do alfy[j]
+            x = whichAlpha(x);
+            alfy[j] = x;
         }
+        alfy.push_back(0);
     }
-    return C;
+
+    return g;
+}
+int BCH_Encoder::whichAlpha(int x) {
+    for (int i = 0; i < alpha_to.size(); i++) {
+        if (alpha_to[i] == x) return i;
+    }
 }
 BCH_Encoder::BCH_Encoder(int _n, int _k, int _t) {
     int wielomianMinimalny = 19; // 0001  0001  1101 285
