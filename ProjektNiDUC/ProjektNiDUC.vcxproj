@@ -127,10 +127,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BCH_Decoder.cpp" />
     <ClCompile Include="BCH_Encoder.cpp" />
     <ClCompile Include="ProjektNiDUC.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BCH_Decoder.h" />
     <ClInclude Include="BCH_Encoder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
