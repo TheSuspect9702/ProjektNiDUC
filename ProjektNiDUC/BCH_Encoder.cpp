@@ -46,35 +46,37 @@ void BCH_Encoder::wyznaczWarstwyCyklotomiczne(vector<int> alpha_to) {
     }
 }
 void BCH_Encoder::generate_g() {
+
+    wyznaczWarstwyCyklotomiczne(alpha_to);
+    
     g.clear();
     g.push_back(1);
 
-    wyznaczWarstwyCyklotomiczne(alpha_to);
+    for (int i = 1; i <= t; i++) {
+        minimalny.clear();
+        minimalny.push_back(1);
+        minimalny = multiply_poly(minimalny, warstwy[i]);
+        g = mul(minimalny, g);
+        //domnazanie minimalnych do generujacego
+    }
+}
+vector <int> BCH_Encoder::mul(vector<int> minimalny, vector<int> g) {
 
-    //minimalne[0].insert(minimalne[0].begin(), 1);
-    //minimalne[0].insert(minimalne[0].begin(), 1);
-    //minimalne[1].insert(minimalne[1].begin(), 1);
-    //minimalne[1].insert(minimalne[1].begin(), 0);
-    //minimalne[1].insert(minimalne[1].begin(), 0);
-    //minimalne[1].insert(minimalne[1].begin(), 1);
-    //minimalne[1].insert(minimalne[1].begin(), 1);
-    //minimalne[2].insert(minimalne[2].begin(), 1);
-    //minimalne[2].insert(minimalne[2].begin(), 1);
-    //minimalne[2].insert(minimalne[2].begin(), 1);
-    //minimalne[2].insert(minimalne[2].begin(), 1);
-    //minimalne[2].insert(minimalne[2].begin(), 1);
-    //minimalne[3].insert(minimalne[3].begin(), 1);
-    //minimalne[3].insert(minimalne[3].begin(), 1);
-    //minimalne[3].insert(minimalne[3].begin(), 1);
-    //minimalne[4].insert(minimalne[4].begin(), 1);
-    //minimalne[4].insert(minimalne[4].begin(), 1);
-    //minimalne[4].insert(minimalne[4].begin(), 0);
-    //minimalne[4].insert(minimalne[4].begin(), 0);
-    //minimalne[4].insert(minimalne[4].begin(), 1);
+    // determine the size of the resulting polynomial
+    const int resultSize = minimalny.size() + g.size() - 1;
 
-    for (int i = 3; i <= t; i++)
-        g = multiply_poly(g, warstwy[i]);
+    // initialize the resulting polynomial with zeros
+    std::vector<int> result(resultSize, 0);
 
+    // multiply the polynomials term by term
+    for (int i = 0; i < minimalny.size(); ++i) {
+        for (int j = 0; j < g.size(); ++j) {
+            result[i + j] += minimalny[i] * g[j];
+            result[i + j] %= 2;
+        }
+    }
+
+    return result;
 }
 vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
 
@@ -95,9 +97,9 @@ vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
         for (int x = 0; x < nawias.size(); x++) {   // mnozenie nawias razy to co dotychczas 
             for (int z = 0; z < tempWynik.size(); z++) {
                 if (x == 0)
-                    temp.push_back(((nawias[x] + tempWynik[z]) % 15));      
+                    temp.push_back(((nawias[x] + tempWynik[z]) % n));      
                 else {
-                    temp1.push_back(((nawias[x] + tempWynik[z]) % 15));
+                    temp1.push_back(((nawias[x] + tempWynik[z]) % n));
                 }
             }
         }
@@ -112,7 +114,7 @@ vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
         }
     }
     for (int i = 0; i < tempWynik.size(); i++) {    //zapis obliczonego wielomianu do g im wyzszy indeks tym wieksza potega przy x
-        if (tempWynik[i] == 15)
+        if (tempWynik[i] == n)
             g.push_back(0);
         else
             g.push_back(alpha_to[tempWynik[i]]);

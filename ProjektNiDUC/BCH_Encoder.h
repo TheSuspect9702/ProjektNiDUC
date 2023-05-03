@@ -6,6 +6,7 @@ using namespace std;
 class BCH_Encoder {
 public:
     vector<int> g; // wielomian generuj¹cy
+    vector<int> minimalny; // wielomian minimalny
     BCH_Encoder(int _n, int _k, int _t);
     vector<int> add(vector<int> a, vector<int> b);
     vector<int> divide(vector<int> dividend, vector<int> divisor);
@@ -28,4 +29,5 @@ private:
     vector<int> alfy;
     vector<int>* minimalne = new vector<int>[5]; //zmienic 5 na odpowiednia zmienna
     vector<int> multiply_poly(vector<int>& A, vector<int>& B);
+    vector<int> mul(vector<int> min, vector<int> g);
 };
