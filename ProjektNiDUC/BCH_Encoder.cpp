@@ -13,6 +13,7 @@ void BCH_Encoder::generate_alphato(int minimalny) {
         }
     }
 }
+
 bool BCH_Encoder::didntOccur(int e, vector<vector<int>> warstwy) {
     for (int i = 0; i < warstwy.size(); i++) {
         for (int j = 0; j < warstwy[i].size(); j++) {
@@ -21,6 +22,7 @@ bool BCH_Encoder::didntOccur(int e, vector<vector<int>> warstwy) {
     }
     return true;
 }
+
 void BCH_Encoder::wyznaczWarstwyCyklotomiczne(vector<int> alpha_to) {
     vector<int> v;
     v.push_back(0);
@@ -45,6 +47,7 @@ void BCH_Encoder::wyznaczWarstwyCyklotomiczne(vector<int> alpha_to) {
         }
     }
 }
+
 void BCH_Encoder::generate_g() {
 
     wyznaczWarstwyCyklotomiczne(alpha_to);
@@ -60,6 +63,7 @@ void BCH_Encoder::generate_g() {
         //domnazanie minimalnych do generujacego
     }
 }
+
 vector <int> BCH_Encoder::mul(vector<int> minimalny, vector<int> g) {
 
     const int resultSize = minimalny.size() + g.size() - 1;
@@ -75,6 +79,20 @@ vector <int> BCH_Encoder::mul(vector<int> minimalny, vector<int> g) {
 
     return result;
 }
+
+vector<int> BCH_Encoder::insertError(vector<int> codeword, int indeks) {
+    vector<int> message;
+    for (int i = 0; i < codeword.size(); i++) {
+        message.push_back(codeword[i]);
+        if (i % n == indeks) {
+            message[i]++;
+            message[i] %= 2;
+        }
+    }
+    
+    return message;
+}
+
 vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
 
     vector<int> tempWynik;
@@ -126,6 +144,7 @@ int BCH_Encoder::whichAlpha(int x) {
         if (alpha_to[i] == x) return i;
     }
 }
+
 BCH_Encoder::BCH_Encoder(int _n, int _k, int _t) {
     int wielomianMinimalny = 19; // 0001  0001  1101 285
     t = _t;
@@ -151,6 +170,7 @@ vector<int> BCH_Encoder::add(vector<int> a, vector<int> b) {
     }
     return result;
 }
+
 vector<int> BCH_Encoder::divide(vector<int> dividend, vector<int> divisor) {
     vector<int> quotient;
     while (dividend.size() >= divisor.size()) {
@@ -184,12 +204,6 @@ vector<int> BCH_Encoder::encode(vector<int> message) {
             for (int j = 0; j < result.size(); j++)
                 codeword.push_back(result[j]);
         }
-    for (int i = 0; i < codeword.size(); i++) {
-        if (i % n == 0) {
-            codeword[i]++;
-            codeword[i] %= 2;
-        }
-    }
     return codeword;
 }
 

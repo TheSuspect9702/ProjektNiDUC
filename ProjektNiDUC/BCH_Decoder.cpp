@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-vector<int> rotateLeft(vector<int> codeword)
+vector<int> rotateLeft(vector<int>& codeword)
 {
 	int temp;
 	temp = codeword[0];
@@ -15,7 +15,7 @@ vector<int> rotateLeft(vector<int> codeword)
 	return codeword;
 }
 
-vector<int> rotateRight(vector<int> codeword)
+vector<int> rotateRight(vector<int>& codeword)
 {
 	int temp;
 	temp = codeword[codeword.size() - 1];
@@ -40,6 +40,7 @@ vector<int> BCH_Decoder::decode(vector<int> codeword, vector<int> g) {
 		rotateLeft(codeword);
 		liczbaPrzesuniec++;
 		wagaHamminga = 0;
+		syndrom = divide(codeword, g);
 		for (int i = 0; i < syndrom.size(); i++) {
 			if (syndrom[i] == 1)
 				wagaHamminga++;

@@ -11,6 +11,8 @@ public:
     vector<int> add(vector<int> a, vector<int> b);
     vector<int> divide(vector<int> dividend, vector<int> divisor);
     vector<int> encode(vector<int> message);
+    vector<int> insertError(vector<int> codeword, int indeks);
+
 private:
     int n; // d³ugoœæ s³owa kodowego
     int k; // iloœæ bitów informacyjnych
