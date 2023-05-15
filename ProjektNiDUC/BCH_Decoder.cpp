@@ -14,6 +14,7 @@ vector<int> rotateLeft(vector<int> codeword)
 	codeword[codeword.size() - 1] = temp;
 	return codeword;
 }
+
 vector<int> rotateRight(vector<int> codeword)
 {
 	int temp;
@@ -57,6 +58,7 @@ vector<int> BCH_Decoder::decode(vector<int> codeword, vector<int> g) {
 	}
 	return codeword;
 }
+
 vector<int> BCH_Decoder::add(vector<int> a, vector<int> b) {
 	vector<int> result;
 	int n = max(a.size(), b.size());

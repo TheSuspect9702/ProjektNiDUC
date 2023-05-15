@@ -62,13 +62,10 @@ void BCH_Encoder::generate_g() {
 }
 vector <int> BCH_Encoder::mul(vector<int> minimalny, vector<int> g) {
 
-    // determine the size of the resulting polynomial
     const int resultSize = minimalny.size() + g.size() - 1;
 
-    // initialize the resulting polynomial with zeros
-    std::vector<int> result(resultSize, 0);
+    vector<int> result(resultSize, 0);
 
-    // multiply the polynomials term by term
     for (int i = 0; i < minimalny.size(); ++i) {
         for (int j = 0; j < g.size(); ++j) {
             result[i + j] += minimalny[i] * g[j];
@@ -120,82 +117,6 @@ vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
             g.push_back(alpha_to[tempWynik[i]]);
     }
     g.erase(g.end()-1); //czyszczenie nadmiarowego miejsca w g 
-    cout << g.size(); //to tak zeby moc wyswietlic co jest w g 
-
-    /*
-        NA TEN MOMENT OBLICZA SIE DOBRZE ILOCZYN DLA POJEDYNCZEJ WARSTWY TERAZ TRZEBA DODAC MNOZENIE WIELOMIANOW 
-        POWSTALYCH POPRZEZ POMNOZENIE POSZCZEGOLNYCH WARSTW, CZYLI DE FACTO TO CO JUZ MIELISMY W TEJ FUNKCJI WCZESNIEJ
-    */
-
-    //tempWynik.push_back(0); //
-    //tempWynik.push_back(1); //jest jakis x
-
-    //alfy.push_back(warstwy[0]); 
-    //alfy.push_back(0);
-
-    //int x;
-    //int len;
-   
-    // for (int i = 1; i < warstwy.size(); i++) {
-    //    len = tempWynik.size();
-    //    for (int j = 0; j < len-1; j++) {
-
-    //        if (alfy[j + 1] == 0) {
-    //            alfy[j + 1] = alfy[j];
-    //            alfy[j + 1] %= 15;
-    //        }
-    //        else {
-    //            x = alpha_to[alfy[j]] ^ alpha_to[alfy[j + 1]];
-    //            x = whichAlpha(x);
-    //            alfy[j + 1] = x;
-    //        }
-    //        if (j == 0) {
-    //            alfy[j] += warstwy[i];
-    //            alfy[j] %= 15;
-    //        }
-    //        else{
-    //            x = alpha_to[alfy[j]] ^ alpha_to[alfy[j] + warstwy[i]];
-    //            x = whichAlpha(x);
-    //            alfy[j] = x;
-    //        }
-    //        
-
-
-
-
-
-    //        //if (j == 0) {
-    //        //    if (alfy[1] == 0) {
-    //        //        alfy[1] += alfy[0];
-    //        //    }
-    //        //    else {
-    //        //        x = alpha_to[alfy[1]] ^ alpha_to[alfy[0]];
-    //        //        x = whichAlpha(x);
-    //        //        alfy[1] = x; //xor   
-    //        //    }
-    //        //    alfy[j] += warstwy[i];
-    //        //    alfy[j] %= 15;
-    //        //    continue;
-    //        //}
-    //        //
-    //        //tempWynik.push_back(1);
-    //        //x = alpha_to[alfy[j]] ^ alpha_to[warstwy[i]];
-    //        ////jakie alfa ma wartosc x i wrzucic ten indeks do alfy[j]
-    //        //x = whichAlpha(x);
-    //        //alfy[j] = x;
-    //    }
-    //    //ostatni znak bo zakres do len -1 
-    //    tempWynik.push_back(1);
-    //    if (alfy[len - 1] == 0) {
-    //        alfy[len - 1] = warstwy[i];
-    //    }
-    //    else {
-    //        x = alpha_to[alfy[len - 1]] ^ alpha_to[warstwy[i]];
-    //        x = whichAlpha(x);
-    //        alfy[len - 1] = x;
-    //    }
-    //    alfy.push_back(0);
-    //}
 
     return g;
 }
@@ -244,14 +165,15 @@ vector<int> BCH_Encoder::divide(vector<int> dividend, vector<int> divisor) {
     }
     return dividend;
 }
+
 vector<int> BCH_Encoder::encode(vector<int> message) {
     vector<int> codeword;
     for (int i = 0; i < message.size(); i++)
-        if (i % 5 == 4) {
+        if (i % k == (k-1)) {
             vector<int>result(k, 0);
             vector<int> rest;
             int x = 0;
-            for (int j = i - 4; j <= i; j++) {
+            for (int j = i - (k - 1); j <= i; j++) {
                 result[x] = message[j];
                 x++;
             }
@@ -263,7 +185,7 @@ vector<int> BCH_Encoder::encode(vector<int> message) {
                 codeword.push_back(result[j]);
         }
     for (int i = 0; i < codeword.size(); i++) {
-        if (i %n == 0) {
+        if (i % n == 0) {
             codeword[i]++;
             codeword[i] %= 2;
         }
