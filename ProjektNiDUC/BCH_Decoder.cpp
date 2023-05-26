@@ -35,7 +35,7 @@ vector<int> BCH_Decoder::decode(vector<int> codeword, vector<int> g) {
 		if (syndrom[i] == 1)
 			wagaHamminga++;
 	}
-	cout << "\n " << wagaHamminga << "\n";
+	//cout << "\n " << wagaHamminga << "\n";
 	while (wagaHamminga > t) {
 		rotateLeft(codeword);
 		liczbaPrzesuniec++;

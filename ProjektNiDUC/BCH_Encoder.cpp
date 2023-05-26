@@ -43,19 +43,20 @@ void BCH_Encoder::wyznaczWarstwyCyklotomiczne(vector<int> alpha_to) {
             warstwy.push_back(v);
             v.clear();
             nrWarstwy++;
-
         }
     }
 }
 
 void BCH_Encoder::generate_g() {
-
+    int sum = 0;
     wyznaczWarstwyCyklotomiczne(alpha_to);
-    
+    for (int i = 0; i < warstwy.size(); i++)
+        sum += warstwy[i].size();
+    cout << sum << endl;
     g.clear();
     g.push_back(1);
 
-    for (int i = 1; i <= t; i++) {
+    for (int i = 1; i <= t-2; i++) {
         minimalny.clear();
         minimalny.push_back(1);
         minimalny = multiply_poly(minimalny, warstwy[i]);
@@ -134,7 +135,7 @@ vector<int> BCH_Encoder::multiply_poly(vector<int>& g, vector<int>& warstwy) {
         else
             g.push_back(alpha_to[tempWynik[i]]);
     }
-    g.erase(g.end()-1); //czyszczenie nadmiarowego miejsca w g 
+    g.erase(g.begin()); //czyszczenie nadmiarowego miejsca w g 
 
     return g;
 }
@@ -146,12 +147,12 @@ int BCH_Encoder::whichAlpha(int x) {
 }
 
 BCH_Encoder::BCH_Encoder(int _n, int _k, int _t) {
-    int wielomianMinimalny = 19; // 0001  0001  1101 285
+    int wielomianMinimalny = 285; // 0001  0001  1101 285
     t = _t;
     n = _n;
     k = _k;
-    m = (int)ceil(log2(n + 1 - k));
-    d = 2 * m + 1;
+    m = (int)ceil(log2(n + 1));
+    d = 2 * t + 1;
     alpha_to.resize(n);
     index_of.resize(n + 1);
     generate_alphato(wielomianMinimalny);
