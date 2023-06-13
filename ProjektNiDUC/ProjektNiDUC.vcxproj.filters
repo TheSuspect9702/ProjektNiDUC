@@ -33,4 +33,7 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="result1.txt" />
+  </ItemGroup>
 </Project>

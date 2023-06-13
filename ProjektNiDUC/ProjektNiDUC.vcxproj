@@ -135,6 +135,9 @@
     <ClInclude Include="BCH_Decoder.h" />
     <ClInclude Include="BCH_Encoder.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="result1.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include "BCH_Encoder.h"
 using namespace std;
 
@@ -81,16 +82,41 @@ vector <int> BCH_Encoder::mul(vector<int> minimalny, vector<int> g) {
     return result;
 }
 
-vector<int> BCH_Encoder::insertError(vector<int> codeword, int indeks) {
+vector<int> BCH_Encoder::insertError(vector<int> codeword, int liczbaBledow) {
+
     vector<int> message;
-    for (int i = 0; i < codeword.size(); i++) {
+    vector<int> used;
+    for (int i = 0; i < codeword.size(); i++)
         message.push_back(codeword[i]);
-        if (i % n == indeks) {
-            message[i]++;
-            message[i] %= 2;
+    while (liczbaBledow > 0) {
+        for (int i = 0; i < codeword.size()-k; i++) {
+            if (rand() % 50 == 1 && !count(used.begin(), used.end(), i)) {
+                message[i]++;
+                message[i] %= 2;
+                liczbaBledow--;
+                used.push_back(i);
+            }
+            if (liczbaBledow == 0)
+                break;
         }
     }
-    
+    return message;
+}
+
+vector<int> BCH_Encoder::insertErrorIndex(vector<int> codeword, int liczbaBledow) {
+    srand(time(NULL));
+    vector<int> message;
+    vector<int> used;
+    for (int i = 0; i < codeword.size(); i++)
+        message.push_back(codeword[i]);
+    message[210] += 1;
+    message[210] %= 2;
+    message[140] += 1;
+    message[140] %= 2;
+    message[70] += 1;
+    message[70] %= 2;
+
+
     return message;
 }
 

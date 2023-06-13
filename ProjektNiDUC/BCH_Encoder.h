@@ -12,6 +12,7 @@ public:
     vector<int> divide(vector<int> dividend, vector<int> divisor);
     vector<int> encode(vector<int> message);
     vector<int> insertError(vector<int> codeword, int indeks);
+    vector<int> insertErrorIndex(vector<int> codeword, int liczbaBledow);
 
 private:
     int n; // d³ugoœæ s³owa kodowego
@@ -22,7 +23,6 @@ private:
     vector<int> alpha_to; // tablica pierwiastków
     vector<int> index_of; // tablica indeksów pierwiastków
     vector<vector<int>> warstwy;
-
     void generate_alphato(int minimalny);
     bool didntOccur(int e, vector<vector<int>> warstwy);
     void wyznaczWarstwyCyklotomiczne(vector<int> alpha_to);

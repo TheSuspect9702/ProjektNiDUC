@@ -4,172 +4,89 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <algorithm>
+#include <fstream>
 
 using namespace std;
 
 int main() {
     srand(time(NULL));
     int k, n, t;
-    k = 115; //wieksze lub rowne n-m*t m = 8 t =20 
+    k = 115; //wieksze lub rowne n-m*t m = 8 t =20 czesc informacyjna na koncu wektora
     n = 255;
     t = 20;
     string wiadomosc;
     BCH_Encoder bch(n, k, t);
-    cout << "Podaj wiadomosc do zakodowania: ";
+    cout << "Podaj wiadomosc do zakodowania (maks 14 znakow): ";
     getline(cin, wiadomosc);
     vector<int> message;
     for (int i = 0; i < wiadomosc.size(); i++) {
-        for (int j = 0; j < 8; j++) {
-            message.insert(message.begin(),(wiadomosc[i] >> j & 1));
+        for (int j = 7; j >= 0; j--) {
+            message.insert(message.end(),(wiadomosc[i] >> j & 1));
         }
     }
     while (message.size() % k != 0 && message.size() > 0)
         message.push_back(0);
     {
-       /* cout << endl;
-        for (int i = 0; i < bch.g.size(); i++) {
-            cout << bch.g[i];
-        }
-        cout << endl;
-        for (int i = 0; i < message.size(); i++) {
-            cout << message[i];
-        }
-        cout << endl;*/
         vector<int> codeword = bch.encode(message);
-        //jeden bit w polu kontrolnym na początku
-        //vector<int> codeword0 = bch.insertError(codeword, 0);
-        ////jeden bit w polu kontrolnym w srodku
-        //vector<int> codeword1 = bch.insertError(codeword, 1);
-        ////jeden bit w polu kontrolnym na koncu
-        //vector<int> codeword2 = bch.insertError(codeword, 2);
-        ////jeden bit poza polem kontrolnym
-        //vector<int> codeword3 = bch.insertError(codeword, 3);
-        ////jeden bit poza polem kontrolnym w srodku
-        //vector<int> codeword8 = bch.insertError(codeword, 8);
-        ////jeden bit w czesci z wiadomoscia
-        //vector<int> codeword11 = bch.insertError(codeword, 11);
-        ////dwa bity w czesci kontrolnej
-        //vector<int> codeword0_1 = bch.insertError(codeword0, 1);
-        ////dwa bity w czesci kontrolnej
-        //vector<int> codeword0_2 = bch.insertError(codeword0, 2);
-        ////dwa bity poza czescia kontrolna
-        //vector<int> codeword8_9 = bch.insertError(codeword8, 9);
-        ////dwa bity w czesci informacyjnej
-        //vector<int> codeword11_12 = bch.insertError(codeword11, 12);
-        ////trzy bity w czesci kontrolnej
-        //vector<int> codeword0_1_2 = bch.insertError(codeword0_1, 2);
-        ////trzy bity poza kontrolna
-        //vector<int> codeword8_9_7 = bch.insertError(codeword8_9, 7);
-        ////trzy bity w czesci informacyjnej
-        //vector<int> codeword11_12_14 = bch.insertError(codeword11_12, 14);
-        ////piec bitow 2 w kontrolnej 3 poza nia
-        //vector<int> codeword0_5_10 = bch.insertError(codeword0, 5);
-        //codeword0_5_10 = bch.insertError(codeword0_5_10, 10);
-        //vector<int> codeword0_1_8_9_6 = bch.insertError(codeword0_1, 8);
-        //codeword0_1_8_9_6 = bch.insertError(codeword0_1_8_9_6, 9);
-        //codeword0_1_8_9_6 = bch.insertError(codeword0_1_8_9_6, 6);
-        //for (int i = 0; i < codeword.size(); i++) {
-        //    cout << codeword[i];
-        //}
-      /*  cout << endl;
-        for (int i = 0; i < codeword.size(); i++) {
-            cout << codeword[i];
-        }*/
-        //cout << endl;
-        //for (int i = 0; i < bch.g.size(); i++) {
-        //    cout << bch.g[i];
-        //}
-        ///*cout << endl;
-        //for (int i = 0; i < codeword0.size(); i++) {
-        //    cout << codeword0[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword1.size(); i++) {
-        //    cout << codeword1[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword2.size(); i++) {
-        //    cout << codeword2[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword3.size(); i++) {
-        //    cout << codeword3[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword8.size(); i++) {
-        //    cout << codeword8[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword11.size(); i++) {
-        //    cout << codeword11[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword0_1.size(); i++) {
-        //    cout << codeword0_1[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword0_2.size(); i++) {
-        //    cout << codeword0_2[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword8_9.size(); i++) {
-        //    cout << codeword8_9[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword11_12.size(); i++) {
-        //    cout << codeword11_12[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword0_1_2.size(); i++) {
-        //    cout << codeword0_1_2[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword8_9_7.size(); i++) {
-        //    cout << codeword8_9_7[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword11_12_14.size(); i++) {
-        //    cout << codeword11_12_14[i];
-        //}
-        //cout << endl;
-        //for (int i = 0; i < codeword0_1_8_9_6.size(); i++) {
-        //    cout << codeword0_1_8_9_6[i];
-        //}
+        vector<int> codeword10 = bch.insertError(codeword, 1);
+        vector<int> codeword20 = bch.insertError(codeword, 2);
 
-        //wieksza ilosc bledow 
-        //spisac wyniki 
-        //szukac dekoder pelny - w mochnackim raczej srednio 
-        //*/
-        BCH_Decoder bchDecode(codeword, t, n, k);
-        cout << endl;
-        for (int i = 0; i < bchDecode.message.size(); i++) {
-            bchDecode.message[i] = bchDecode.decode(bchDecode.message[i], bch.g);
-           /* for (int j = bchDecode.message[i].size() - 1; j > bchDecode.message[i].size() - 1 - k; j--) {
-                cout << bchDecode.message[i][j];
-            }*/
-        }
-        cout << "\nOdkodowana wiadomosc: ";
-        char znak = 0;
-        int x = 4;
-        for (int i = 0; i < bchDecode.message.size(); i++) {
-            for (int j = 0; j < k; j++) {
-                if (x==8) {
-                    if (znak != 0)
-                        cout << znak;
-                    znak = 0;
-                   // cout << " ";
-                    x = 0;
+        vector<int> codeword80 = bch.insertError(codeword, 8);
+        vector<int> codeword160 = bch.insertError(codeword, 16);
+        vector<int> codeword200 = bch.insertError(codeword, 20);
+        vector<int> codeword210 = bch.insertError(codeword, 21);
+        vector<int> codeword300 = bch.insertError(codeword, 30);
+        vector<int> codeword999 = bch.insertErrorIndex(codeword, 10);
+        /*
+            wiecej błędów również wymieszane i zrobic kazdy mozliwy blad
+            dekoder pelny
+            zaczac sprawozdanie
+            sprawozdanie:
+            wyniki testow i dlaczego tak jest
+            co o tym myslimy itp.
+            nie opisywac teori kodera i dekodera itp
+            pokazac ze zrozumielismy jak dziala kod
+            i pokazac ze zrozumielismy jak dziala dekoder pelny
+        */
+        double poprawne;
+        string odczyt;
+        char znak;
+        int x;
+        vector<int> codeword40;
+        ofstream zapis("result1.txt");
+        for (int z = 1; z < 26; z++) {
+            poprawne = 0;
+            for (int c = 1000; c > 0; c--) {
+                odczyt.clear();
+                codeword40 = bch.insertError(codeword, z);
+                BCH_Decoder bchDecode(codeword40, t, n, k);
+                for (int i = 0; i < bchDecode.message.size(); i++) {
+                    bchDecode.message[i] = bchDecode.decode(bchDecode.message[i], bch.g);
                 }
-                
-                //cout << bchDecode.message[i][bchDecode.message[i].size() - j - 1];
-                znak += bchDecode.message[i][bchDecode.message[i].size() - j-1] * pow(2, x);
-                x++;
-                if (znak == 'd') {
-                    cout << "";
+                znak = 0;
+                x = 7;
+                for (int i = bchDecode.message.size() - 1; i >= 0; i--) {
+                    for (int j = k - 1; j >= 0; j--) {
+                        if (x == -1) {
+                            if (znak != 0)
+                                odczyt += znak;
+                            znak = 0;
+                            x = 7;
+                        }
+
+                        znak += bchDecode.message[i][bchDecode.message[i].size() - j - 1] * pow(2, x);
+                        x--;
+                    }
                 }
+                if (znak != 0)
+                    odczyt += znak;
+                if (odczyt == wiadomosc)
+                    poprawne++;
             }
+            zapis << z << " " << poprawne/10 << endl;
+            cout << z << endl;
         }
-        cout << znak;
     }
     return 0;
 }
